@@ -5,23 +5,23 @@ MAINTAINER <hkusatz@gmail.com>
 # From original debian:jessie and alpine-mysql, adapted for armhf/alpine
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-RUN addgroup mysql  
-RUN adduser -r -g mysql mysql
+RUN addgroup mysql && adduser -s /bin/false -G mysql -S -D -H mysql 
 
-apk add --update --no-cache --virtual .build-deps
+RUN apk add --update --no-cache --virtual .build-deps \
 
 # for MYSQL_RANDOM_ROOT_PASSWORD
-		pwgen \
+		 pwgen \ 
 # for mysql_ssl_rsa_setup
-		openssl \
+		openssl \ 
 # FATAL ERROR: please install the following Perl modules before executing /usr/local/mysql/scripts/mysql_install_db:
 # File::Basename
 # File::Copy
 # Sys::Hostname
 # Data::Dumper
-		perl \
-	&& rm -rf /var/lib/apt/lists/*
-RUN apk add --no-cache --virtual .build-deps mysql mysql-cli 
+		 perl \ 
+
+	&& rm -rf /var/lib/apt/lists/* \
+	&& apk add --no-cache --virtual .build-deps mysql mysql-client \
 	&& rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql /var/run/mysqld \
 	&& chown -R mysql:mysql /var/lib/mysql /var/run/mysqld \
 # ensure that /var/run/mysqld (used for socket and lock files) is writable regardless of the UID our mysqld instance ends up having at runtime
@@ -29,8 +29,8 @@ RUN apk add --no-cache --virtual .build-deps mysql mysql-cli
 
 # comment out a few problematic configuration values
 # don't reverse lookup hostnames, they are usually another container
-RUN sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/mysql.conf.d/mysqld.cnf \
-	&& echo '[mysqld]\nskip-host-cache\nskip-name-resolve' > /etc/mysql/conf.d/docker.cnf
+#### RUN sed -Ei 's/^(bind-address|log)/#&/' /etc/mysql/mysql.conf.d/mysqld.cnf \
+####	&& echo '[mysqld]\nskip-host-cache\nskip-name-resolve' > /etc/mysql/conf.d/docker.cnf
 
 VOLUME /var/lib/mysql
 
