@@ -5,7 +5,8 @@ MAINTAINER <hkusatz@gmail.com>
 # From original debian:jessie and alpine-mysql, adapted for armhf/alpine
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-RUN groupadd mysql $$ useradd -r -g mysql mysql
+RUN groupadd mysql  
+RUN useradd -g mysql mysql
 
 apk add --update --no-cache --virtual .build-deps
 
