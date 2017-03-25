@@ -5,7 +5,8 @@ MAINTAINER <hkusatz@gmail.com>
 # From original debian:jessie for armhf
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-RUN groupadd -r mysql && useradd -r -g mysql mysql
+RUN groupadd -r mysql 
+RUN useradd -r -g mysql mysql
 
 # add gosu for easy step-down from root
 ENV GOSU_VERSION 1.7
